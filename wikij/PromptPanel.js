@@ -4,10 +4,12 @@ export default class PromptPanel extends Component {
 
     render() {
 
-        const {prompt, response} = this.props;
+        const {prompt, response, onBack, show} = this.props;
 
         return (
-            <div style={styles.promptPanel}>
+            <div style={styles.promptPanel} className={show ? "" : "hide"}>
+                <button onClick={() => onBack()}>Back to Board</button>
+                <br/>
                 {prompt}
             </div>
         )

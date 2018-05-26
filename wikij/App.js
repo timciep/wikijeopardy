@@ -17,7 +17,8 @@ export default class App extends Component {
   state = {
     boardMode: true,
     currentPrompt: '',
-    currentResponse: ''
+    currentResponse: '',
+    started: false
   }
 
   handlePromptClick = (prompt, response) => {
@@ -26,21 +27,30 @@ export default class App extends Component {
     this.setState({boardMode: false});
   }
 
+  handleShowBoard = () => {
+    this.setState({boardMode: true});
+  }
+
   render() {
 
-    const {boardMode, currentPrompt, currentResponse} = this.state;
+    const {boardMode, currentPrompt, currentResponse, started} = this.state;
 
     return (
       <div style={styles.app}>
-        {boardMode ? (
-          data.map(item => <Row 
+        {data.map(item => <Row 
                               key={item.id}
                               category={item.category}
                               onPromptClick={this.handlePromptClick}
-                            />)
-        ) : (
-          <PromptPanel prompt={currentPrompt} response={currentResponse} />
-        ) }
+                              show={boardMode}
+                            />
+         ) }
+          <PromptPanel
+            prompt={currentPrompt}
+            response={currentResponse}
+            onBack={this.handleShowBoard}
+            show={!boardMode}
+          />
+         
       </div>
     )
   }

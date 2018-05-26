@@ -11,7 +11,6 @@ export default class Row extends Component {
 
     state = {
         complete: false,
-       // wikiPage: '',
         wikiLinkPool: {
             "100": {prompt: "cool guy", response: "me"},
             "200": {prompt: "cool guy", response: "me"},
@@ -84,7 +83,7 @@ export default class Row extends Component {
                 if (pages[pg]['pageviews'] && pages[pg]['terms'] && pages[pg]['terms']['description']) {
                     prompts.push({
                         pageviews: pages[pg]['pageviews'],
-                        prompt: pages[pg]['terms']['description'][0],
+                        prompt: capitalizeFirstLetter(pages[pg]['terms']['description'][0]),
                         response: pages[pg]['title']
                     });
                 }
@@ -111,10 +110,10 @@ export default class Row extends Component {
     render() {
 
         const {complete, wikiLinkPool, catState} = this.state;
-        const {category} = this.props;
+        const {category, show} = this.props;
 
         return (
-            <div style={styles.row}>
+            <div style={styles.row} className={show ? "" : "hide"}>
                 <CatPanel onClickItem={this.getQs} category={catState} complete={complete} />
                 {amounts.map(this.renderPanel)}
             </div>
@@ -132,3 +131,8 @@ const styles = {
         marginLeft: 5,
     }
 };
+
+
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}

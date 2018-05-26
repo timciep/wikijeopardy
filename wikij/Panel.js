@@ -14,14 +14,17 @@ export default class Panel extends Component {
     render() {
 
         const {read} = this.state;
-        const {amount, prompt} = this.props;
+        const {amount, prompt, response} = this.props;
 
         return (
             <div onClick={() => this.readit()} style={styles.panel}>
                 {!read ? (
                     <div style={styles.amount}>${amount}</div>
                 ) : (
-                    <div>{prompt}</div>
+                    <div>
+                        <div style={styles.prompt}>{prompt}</div>
+                        <div style={styles.response}>{response}</div>
+                    </div>
                 ) }
             </div>
         )
@@ -45,5 +48,15 @@ const styles = {
         color: '#fff005',
         fontSize: '26px',
         fontWeight: 'bold',
+    },
+    prompt: {
+        color: 'white',
+        overflow: 'hidden',
+        whiteSpace: 'nowrap',
+        textOverflow: 'ellipsis',
+        padding: '0 10px 0 10px',
+    },
+    response: {
+        color: '#fff005',
     }
 };
