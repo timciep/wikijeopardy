@@ -2,16 +2,41 @@ import React, { Component } from 'react';
 
 export default class CatPanel extends Component {
 
+    state = {value: ''}
+
+    handleChange = (e) => {
+        this.setState({value: e.target.value})
+    }
+
+    handleKeyPress = (e) => {
+        const {value} = this.state;
+        const {onClickItem} = this.props;
+        if (e.key === 'Enter') {
+            onClickItem(value);
+        }
+    }
+
     render() {
 
-        const {complete, category, onClickItem} = this.props;
+        const {value} = this.state;
+
+        const {set, category, onClickItem} = this.props;
 
         return (
             <div style={styles.panel}>
-                {!complete ? (
-                    <div onClick={() => onClickItem(category)} style={styles.amount}>{category.toUpperCase()}</div>
+                {set ? (
+                    <div style={styles.amount}>{category.toUpperCase()}</div>
                 ) : (
-                    <div></div>
+                    <div>
+                        <input
+                            id={'cat-input'}
+                            type={'text'}
+                            value={value}
+                            onChange={this.handleChange}
+                            onKeyPress={this.handleKeyPress}
+                        />
+                        <button onClick={() => onClickItem(value)}>Go</button>
+                    </div>
                 ) }
             </div>
         )

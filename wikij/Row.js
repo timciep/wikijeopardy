@@ -10,7 +10,7 @@ const amounts = ['100', '200', '300', '400', '500'];
 export default class Row extends Component {
 
     state = {
-        complete: false,
+        set: false,
         wikiLinkPool: {
             "100": {prompt: "cool guy", response: "me"},
             "200": {prompt: "cool guy", response: "me"},
@@ -46,6 +46,7 @@ export default class Row extends Component {
       .then((resp) => {
         this.setState({catState: resp.data[1][0]});
         this.setLinks(resp.data[1][0], false);
+        this.setState({set: true});
       })
     }
 
@@ -109,12 +110,12 @@ export default class Row extends Component {
 
     render() {
 
-        const {complete, wikiLinkPool, catState} = this.state;
+        const {set, wikiLinkPool, catState} = this.state;
         const {category, show} = this.props;
 
         return (
             <div style={styles.row} className={show ? "" : "hide"}>
-                <CatPanel onClickItem={this.getQs} category={catState} complete={complete} />
+                <CatPanel onClickItem={this.getQs} category={catState} set={set} />
                 {amounts.map(this.renderPanel)}
             </div>
         )
