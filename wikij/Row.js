@@ -12,11 +12,11 @@ export default class Row extends Component {
     state = {
         set: false,
         wikiLinkPool: {
-            "100": {prompt: "cool guy", response: "me"},
-            "200": {prompt: "cool guy", response: "me"},
-            "300": {prompt: "cool guy", response: "me"},
-            "400": {prompt: "cool guy", response: "me"},
-            "500": {prompt: "cool guy", response: "me"},
+            "100": {prompt: "prompt", response: "response"},
+            "200": {prompt: "prompt", response: "response"},
+            "300": {prompt: "prompt", response: "response"},
+            "400": {prompt: "prompt", response: "response"},
+            "500": {prompt: "prompt", response: "response"},
         },
         catState: this.props.category
     }
