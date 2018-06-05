@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import wiki from 'wikijs';
 
 import CatPanel from './CatPanel';
 import Panel from './Panel';
@@ -116,7 +117,9 @@ export default class Row extends Component {
         return (
             <div style={styles.row} className={show ? "" : "hide"}>
                 <CatPanel onClickItem={this.getQs} category={catState} set={set} />
-                {amounts.map(this.renderPanel)}
+                <div className={set ? "" : "hide"}>
+                    {amounts.map(this.renderPanel)}
+                </div>
             </div>
         )
     }

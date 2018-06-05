@@ -4,9 +4,9 @@ import Row from './Row';
 import PromptPanel from './PromptPanel';
 
 const data = [
-  {id: '1', category: 'cars'},
-  {id: '2', category: 'rock music'},
-  {id: '3', category: 'rome'},
+  {id: '1', category: ''},
+  {id: '2', category: ''},
+  {id: '3', category: ''},
   //{id: '4', category: 'basketball'},
   //{id: '5', category: 'christmas'},
   //{id: '6', category: 'sharks'},

@@ -2,46 +2,45 @@ import React, { Component } from 'react';
 
 export default class PromptPanel extends Component {
 
-    state = {userResponse: ''}
+    state = {
+        userResponse: '',
+        shuffledResponse: '',
+        showState: false
+    }
 
     handleResponseChange = (e) => {
-        const {response, onBack} = this.props;
+        const {response} = this.props;
         let uResponse = e.target.value;
         this.setState({userResponse: uResponse});
         if (uResponse.toLowerCase() === response.toLowerCase()) {
-            onBack();
+            this.backToBoard();
         }
     }
 
-    beforeMaskedValueChange = (newState, oldState, userInput) => {
-        var { value } = newState;
-        var selection = newState.selection;
-        var cursorPosition = selection ? selection.start : null;
     
-        // keep minus if entered by user
-        if (value.endsWith('-') && userInput !== '-' && !this.state.value.endsWith('-')) {
-          if (cursorPosition === value.length) {
-            cursorPosition--;
-            selection = { start: cursorPosition, end: cursorPosition };
-          }
-          value = value.slice(0, -1);
-        }
+    showHint = () => {
+        const {response} = this.props;
+        this.setState({shuffledResponse: response.shuffle()});
+    }
 
-        return {
-            value,
-            selection
-          };
-        }
+
+    backToBoard = () => {
+        const {onBack} = this.props;
+        this.setState({userResponse: ''});
+        this.setState({shuffledResponse: ''});
+        onBack();
+    }
+
 
     render() {
 
-        const {userResponse} = this.state;
+        const {prompt, response, show} = this.props;
 
-        const {prompt, response, onBack, show} = this.props;
+        const {userResponse, shuffledResponse} = this.state;
 
         return (
             <div style={styles.promptPanel} className={show ? "" : "hide"}>
-                <button onClick={() => onBack()}>Back to Board</button>
+                <button onClick={() => this.backToBoard()}>Back to Board</button>
                 <br/>
                 <div>{prompt}</div>
                 <div>
@@ -52,7 +51,8 @@ export default class PromptPanel extends Component {
                         onChange={this.handleResponseChange}
                     />
                 </div>
-                <div>{response.shuffle()}</div>
+                <div><button onClick={() => this.showHint()}>Hint</button> (word jumble)</div>
+                <div>{shuffledResponse}</div>
             </div>
         )
     }
@@ -65,7 +65,7 @@ const styles = {
         padding: 20,
         backgroundColor: '#0000b2',
         margin: 20,
-
+        lineHeight: 2,
     }
 };
 
