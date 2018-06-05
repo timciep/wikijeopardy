@@ -34,22 +34,78 @@ export default class Row extends Component {
     }
 
     getQs = (category) => {
-        axios.get(`https://en.wikipedia.org/w/api.php`, {
-        params: {
-          action: 'opensearch',
-          datatype: 'json',
-          limit: 5,
-          search: category,
-          profile: 'fuzzy',
-          origin: '*'
-        }
-      })
-      .then((resp) => {
-        this.setState({catState: resp.data[1][0]});
-        this.setLinks(resp.data[1][0], false);
-        this.setState({set: true});
-      })
+
+        wiki().search(category).then(data => {
+            let searchResult = data.results[0];
+            this.setState({catState: searchResult});
+
+            this.setLinks2(searchResult);
+
+            
+        });
+
     }
+
+
+
+    setLinks2(searchResult) {
+
+        wiki().page(searchResult).then(page => {
+
+            page.links().then(links => {
+                
+                let copyPool = {};
+
+                amounts.map((val, idx) => {
+
+                    let goodOne = false;
+
+                    //while(goodOne == false) {
+
+                        let candidate = links[Math.floor(Math.random()*links.length)];
+
+                        //if (!candidate.indexOf("(")) {
+
+                            wiki().page(candidate).then(page => {
+                                console.log(page.raw);
+                              //  if (page.raw.length > 5000) {
+                                   // goodOne = true;
+                                    page.summary().then(summary => {
+                                        copyPool[val] = {
+                                            prompt: summary,
+                                            response: candidate
+                                        };
+                                        console.log(copyPool);
+                                    });
+                               // }
+                            });
+
+                       // }
+
+                    //}
+
+
+                    copyPool[val] = {
+                      //  prompt: prompts[idx].prompt,
+                      //  response: prompts[idx].response
+                    }
+
+                    
+                    
+
+                });
+
+                
+                this.setState({wikiLinkPool: copyPool});
+                this.setState({set: true});
+
+            });
+
+        });
+
+    }
+
+
 
     setLinks(page, cont) {
 
