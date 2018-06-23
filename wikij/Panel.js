@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 
 export default class Panel extends Component {
 
-    state = {read: false}
+    state = {
+        read: false,
+    }
 
     readit = () => {
         const {amount, prompt, response, onPromptClick} = this.props;
@@ -14,7 +16,7 @@ export default class Panel extends Component {
     render() {
 
         const {read} = this.state;
-        const {amount, prompt, response} = this.props;
+        const {amount, prompt, response, correct} = this.props;
 
         return (
             <div onClick={() => this.readit()} style={styles.panel}>
@@ -23,7 +25,7 @@ export default class Panel extends Component {
                 ) : (
                     <div>
                         <div style={styles.prompt}>{prompt}</div>
-                        <div style={styles.response}>{response}</div>
+                        <div style={styles.responseCorrect}>{response}</div>
                     </div>
                 ) }
             </div>
@@ -56,7 +58,10 @@ const styles = {
         textOverflow: 'ellipsis',
         padding: '0 10px 0 10px',
     },
-    response: {
+    responseCorrect: {
         color: '#fff005',
+    },
+    respnseWrong: {
+        color: 'red'
     }
 };

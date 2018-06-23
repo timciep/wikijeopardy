@@ -13,11 +13,11 @@ export default class Row extends Component {
     state = {
         set: false,
         wikiLinkPool: {
-            "100": {prompt: "prompt", response: "response"},
-            "200": {prompt: "prompt", response: "response"},
-            "300": {prompt: "prompt", response: "response"},
-            "400": {prompt: "prompt", response: "response"},
-            "500": {prompt: "prompt", response: "response"},
+            "100": {prompt: "prompt", response: "response", correct: false},
+            "200": {prompt: "prompt", response: "response", correct: false},
+            "300": {prompt: "prompt", response: "response", correct: false},
+            "400": {prompt: "prompt", response: "response", correct: false},
+            "500": {prompt: "prompt", response: "response", correct: false},
         },
         catState: this.props.category
     }
@@ -28,6 +28,7 @@ export default class Row extends Component {
             <Panel key={amount} amount={amount}
                 prompt={this.state.wikiLinkPool[amount].prompt}
                 response={this.state.wikiLinkPool[amount].response}
+                correct={this.state.wikiLinkPool[amount].correct}
                 onPromptClick={onPromptClick}
             />
         )
@@ -50,53 +51,35 @@ export default class Row extends Component {
 
     setLinks2(searchResult) {
 
+        const {wikiLinkPool} = this.state;
+
         wiki().page(searchResult).then(page => {
 
             page.links().then(links => {
-                
-                let copyPool = {};
+
+                let copyPool = wikiLinkPool;
 
                 amounts.map((val, idx) => {
 
                     let goodOne = false;
 
-                    //while(goodOne == false) {
+                    let candidate = links[Math.floor(Math.random()*links.length)];
 
-                        let candidate = links[Math.floor(Math.random()*links.length)];
+                    wiki().page(candidate).then(page => {
+                        page.summary().then(summary => {
 
-                        //if (!candidate.indexOf("(")) {
+                            let cleanedPrompt = this.cleanThisPrompt(summary, candidate);
 
-                            wiki().page(candidate).then(page => {
-                                console.log(page.raw);
-                              //  if (page.raw.length > 5000) {
-                                   // goodOne = true;
-                                    page.summary().then(summary => {
-                                        copyPool[val] = {
-                                            prompt: summary,
-                                            response: candidate
-                                        };
-                                        console.log(copyPool);
-                                    });
-                               // }
-                            });
-
-                       // }
-
-                    //}
-
-
-                    copyPool[val] = {
-                      //  prompt: prompts[idx].prompt,
-                      //  response: prompts[idx].response
-                    }
-
-                    
-                    
+                            copyPool[val] = {
+                                prompt: cleanedPrompt,
+                                response: candidate
+                            };
+                            this.setState({wikiLinkPool: copyPool});
+                        });
+                    });
 
                 });
 
-                
-                this.setState({wikiLinkPool: copyPool});
                 this.setState({set: true});
 
             });
@@ -107,63 +90,23 @@ export default class Row extends Component {
 
 
 
-    setLinks(page, cont) {
+    cleanThisPrompt(prompt, candidate) {
 
-        let paramz = {
-            action: 'query',
-            format: 'json',
-            titles: page,
-            gplnamespace: '0',
-            prop: 'pageviews|pageterms',
-            pvipdays: '1',
-            generator: 'links',
-            gpllimit: '500',
-            origin: '*',
-        }
+        let canArray = candidate.split(' ');
 
-        if (cont) {
-            for (let key in cont){
-                paramz[key] = cont[key];
-            }
-        }
+        let returnPrompt = prompt;
 
-        axios.get(`https://en.wikipedia.org/w/api.php`, {
-            params: paramz
-        })
-        .then((resp) => {
-            let pages = resp.data['query']['pages'];
-
-            //console.log(pages);
-
-            let prompts = [];
-
-            for (let pg in pages) {
-                if (pages[pg]['pageviews'] && pages[pg]['terms'] && pages[pg]['terms']['description']) {
-                    prompts.push({
-                        pageviews: pages[pg]['pageviews'],
-                        prompt: capitalizeFirstLetter(pages[pg]['terms']['description'][0]),
-                        response: pages[pg]['title']
-                    });
-                }
-            }
-
-            let copyPool = {};
-            amounts.map((val, idx) => {
-                copyPool[val] = {
-                    prompt: prompts[idx].prompt,
-                    response: prompts[idx].response
-                }
-            });
-            this.setState({wikiLinkPool: copyPool});
-            //let newObj = Object.assign(resp.data['query']['pages'], this.state.wikiLinkPool);
-            //this.setState({wikiLinkPool: newObj});
-            //this.setState({catState: this.state.wikiLinkPool[844]['title']});
-            if(resp.data['continue']) {
-             //   this.setLinks(page, resp.data['continue'])
-            }
-        })
-
+        canArray.forEach(canWord => {
+            let obfCandidate = canWord.replace(/[a-zA-Z]/g, '_')
+            let reg2 = new RegExp(canWord, 'ig');
+            returnPrompt = returnPrompt.replace(reg2, obfCandidate);
+        });
+        
+        return returnPrompt;
     }
+
+
+
 
     render() {
 
